@@ -9,7 +9,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ reply: "Please provide a message." });
     }
 
-    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json({ reply: "GROQ API key is missing from environment variables." }, { status: 500 });
+    }
+
+    const groq = new Groq({ apiKey });
 
     const response = await groq.chat.completions.create({
       model: "llama3-70b-8192", // Replace with your desired model
