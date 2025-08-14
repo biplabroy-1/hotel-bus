@@ -29,9 +29,9 @@ export default function Sidebar() {
   const pathname = usePathname()
 
   const tabs = [
-    { id: "KYC", label: "KYC", icon: UserCheck, path: "/" },
-    { id: "Recipe", label: "Recipe", icon: Home, path: "/recipes" },
-    { id: "QR", label: "QR", icon: FileText, path: "/qr" },
+    { id: "KYC", label: "KYC", icon: UserCheck, path: "/admin/kyc" },
+    { id: "Recipe", label: "Recipe", icon: Home, path: "/admin/recipes" },
+    { id: "QR", label: "QR", icon: FileText, path: "/admin/qr" },
   ]
 
   return (
