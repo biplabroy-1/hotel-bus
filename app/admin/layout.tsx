@@ -7,7 +7,7 @@ export function layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
+    <div className="flex-col flex md:flex-row ">
       <Sidebar />
       {children}
     </div>
