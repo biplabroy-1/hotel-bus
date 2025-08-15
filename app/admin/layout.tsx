@@ -7,9 +7,13 @@ export function layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex-col flex md:flex-row ">
+    <div className="flex min-h-screen">
       <Sidebar />
-      {children}
+      <main className="flex-1 overflow-y-auto">
+        <div className="container p-4 lg:p-8">
+          {children}
+        </div>
+      </main>
     </div>
   );
 }

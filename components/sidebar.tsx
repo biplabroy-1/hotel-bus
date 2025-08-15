@@ -3,9 +3,10 @@
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Home, FileText, UserCheck, Sun, Moon, QrCode, Building2 } from "lucide-react"
+import { Home, FileText, UserCheck, Sun, Moon, QrCode, Building2, Menu } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useRouter, usePathname } from "next/navigation"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme()
@@ -23,8 +24,7 @@ function ThemeToggle() {
   )
 }
 
-export default function Sidebar() {
-  const { theme } = useTheme()
+function SidebarContent() {
   const router = useRouter()
   const pathname = usePathname()
 
@@ -36,7 +36,7 @@ export default function Sidebar() {
   ]
 
   return (
-    <aside className="h-screen w-64 bg-card border-r border-border flex flex-col">
+    <div className="flex flex-col h-full">
       {/* App Header */}
       <div className="p-6 border-b border-border">
         <h1 className="text-2xl font-bold text-primary">Hotel Bus</h1>
@@ -69,11 +69,39 @@ export default function Sidebar() {
       </div>
 
       {/* Theme Toggle */}
-      <div className="p-4 border-t border-border">
+      <div className="p-4 border-t border-border mt-auto">
         <div className="flex justify-center">
           <ThemeToggle />
         </div>
       </div>
-    </aside>
+    </div>
+  )
+}
+
+export default function Sidebar() {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <>
+      {/* Mobile Menu Button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="icon">
+              <Menu className="h-[1.2rem] w-[1.2rem]" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0">
+            <SidebarContent />
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex h-screen w-64 bg-card border-r border-border flex-col">
+        <SidebarContent />
+      </aside>
+    </>
   )
 }
