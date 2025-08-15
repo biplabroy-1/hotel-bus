@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Home, FileText, UserCheck, Sun, Moon, QrCode } from "lucide-react"
+import { Home, FileText, UserCheck, Sun, Moon, QrCode, Building2 } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useRouter, usePathname } from "next/navigation"
 
@@ -31,6 +31,7 @@ export default function Sidebar() {
   const tabs = [
     { id: "recipes", label: "Recipes", icon: Home, path: "/admin/recipes" },
     { id: "kyc", label: "KYC", icon: UserCheck, path: "/admin/kyc" },
+    { id: "hotels", label: "Hotels", icon: Building2, path: "/admin/hotels" },
     { id: "qr", label: "QR Codes", icon: QrCode, path: "/admin/qr" },
   ]
 
