@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeToggle } from "@/components/theme-toggle"; // import your toggle
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,8 +33,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex h-screen">
-            <main className="flex-1 overflow-y-auto p-4">
+          <div className="flex h-screen flex-col">
+            {/* Optional small header for theme toggle */}
+            <div className="flex justify-end p-2 border-b">
+              <ThemeToggle />
+            </div>
+
+            <main className="flex-1 overflow-y-auto">
               {children}
             </main>
           </div>
