@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Home, FileText, UserCheck, Sun, Moon } from "lucide-react"
+import { Home, FileText, UserCheck, Sun, Moon, QrCode } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useRouter, usePathname } from "next/navigation"
 
@@ -29,42 +29,49 @@ export default function Sidebar() {
   const pathname = usePathname()
 
   const tabs = [
-    { id: "KYC", label: "KYC", icon: UserCheck, path: "/admin/kyc" },
-    { id: "Recipe", label: "Recipe", icon: Home, path: "/admin/recipes" },
-    { id: "QR", label: "QR", icon: FileText, path: "/admin/qr" },
+    { id: "recipes", label: "Recipes", icon: Home, path: "/admin/recipes" },
+    { id: "kyc", label: "KYC", icon: UserCheck, path: "/admin/kyc" },
+    { id: "qr", label: "QR Codes", icon: QrCode, path: "/admin/qr" },
   ]
 
   return (
-    <aside className="h-screen w-56 bg-muted flex flex-col p-2 border-r">
-      {/* Tabs */}
-      <div className="flex-1 space-y-1">
-        {tabs.map((tab) => {
-          const Icon = tab.icon
-          const isActive = pathname === tab.path
+    <aside className="h-screen w-64 bg-card border-r border-border flex flex-col">
+      {/* App Header */}
+      <div className="p-6 border-b border-border">
+        <h1 className="text-2xl font-bold text-primary">Hotel Bus</h1>
+        <p className="text-sm text-muted-foreground mt-1">Admin Dashboard</p>
+      </div>
 
-          return (
-            <Button
-              key={tab.id}
-              variant="ghost"
-              className={cn(
-                "w-full justify-start gap-2",
-                isActive &&
-                  (theme === "light"
-                    ? "bg-black text-white hover:bg-black"
-                    : "bg-white text-black hover:bg-white")
-              )}
-              onClick={() => router.push(tab.path)}
-            >
-              <Icon className="h-4 w-4" />
-              {tab.label}
-            </Button>
-          )
-        })}
+      {/* Navigation */}
+      <div className="flex-1 p-4">
+        <nav className="space-y-2">
+          {tabs.map((tab) => {
+            const Icon = tab.icon
+            const isActive = pathname === tab.path
+
+            return (
+              <Button
+                key={tab.id}
+                variant={isActive ? "default" : "ghost"}
+                className={cn(
+                  "w-full justify-start gap-3 h-11",
+                  isActive && "bg-primary text-primary-foreground"
+                )}
+                onClick={() => router.push(tab.path)}
+              >
+                <Icon className="h-5 w-5" />
+                {tab.label}
+              </Button>
+            )
+          })}
+        </nav>
       </div>
 
       {/* Theme Toggle */}
-      <div className="mt-auto flex justify-center p-2">
-        <ThemeToggle />
+      <div className="p-4 border-t border-border">
+        <div className="flex justify-center">
+          <ThemeToggle />
+        </div>
       </div>
     </aside>
   )
