@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Edit, Trash2, ChefHat } from "lucide-react";
+import { Plus, Edit, Trash2, ChefHat, Filter } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 type Recipe = {
@@ -161,15 +161,16 @@ export default function RecipesPage() {
   };
 
   return (
-    <div className="flex-1 p-6">
+    <div className="flex-1 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
+            <h1 className="text-3xl font-bold flex items-center gap-2 mb-3">
               <ChefHat className="h-8 w-8 text-primary" />
               Recipe Management
             </h1>
+            <div className="flex flex-col">
+        <div className="flex items-center justify-between mb-4">
+          <div>
             <p className="text-muted-foreground mt-2">
               Manage your hotel's recipe collection
             </p>
@@ -406,6 +407,19 @@ export default function RecipesPage() {
               </div>
             </DialogContent>
           </Dialog>
+          </div>
+          <div className="flex items-center gap-2 mb-4">
+            {/* Search Bar */}
+            <Input 
+              type="text" 
+              placeholder="Search recipes..." 
+              className="flex-1"
+            />
+            {/* Filter Button */}
+            <Button variant="outline" size="icon">
+              <Filter className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Recipe Grid */}
