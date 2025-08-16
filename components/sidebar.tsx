@@ -30,7 +30,7 @@ function SidebarContent() {
 
   const tabs = [
     { id: "kyc", label: "KYC", icon: UserCheck, path: "/admin/kyc" },
-    { id: "recipes", label: "Recipes", icon: Home, path: "/admin/recipes" },
+    { id: "recipes", label: "Recipes", icon: Home, path: "/admin" },
     { id: "qr", label: "QR Codes", icon: QrCode, path: "/admin/qr" },
     { id: "hotels", label: "Hotels", icon: Building2, path: "/admin/hotels" },
   ]
