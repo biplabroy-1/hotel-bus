@@ -1,88 +1,116 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, Edit, Trash2, ChefHat } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Plus, Edit, Trash2, ChefHat } from "lucide-react";
 
 type Recipe = {
-  id: number
-  name: string
-  image: string
-  ingredients: string[]
-  dishType: string
-  description: string
-  price?: number
-}
+  id: number;
+  name: string;
+  image: string;
+  ingredients: string[];
+  dishType: string;
+  description: string;
+  price?: number;
+};
 
 export default function RecipesPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([
     {
       id: 1,
       name: "Butter Chicken",
-      image: "https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg",
+      image:
+        "https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg",
       ingredients: ["Chicken", "Butter", "Tomatoes", "Cream", "Spices"],
       dishType: "Main Course",
       description: "Creamy and rich butter chicken with aromatic spices",
-      price: 18.99
+      price: 18.99,
     },
     {
       id: 2,
       name: "Caesar Salad",
-      image: "https://images.pexels.com/photos/2097090/pexels-photo-2097090.jpeg",
+      image:
+        "https://images.pexels.com/photos/2097090/pexels-photo-2097090.jpeg",
       ingredients: ["Lettuce", "Parmesan", "Croutons", "Caesar Dressing"],
       dishType: "Appetizer",
       description: "Fresh crispy salad with homemade caesar dressing",
-      price: 12.99
-    }
-  ])
+      price: 12.99,
+    },
+  ]);
 
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     image: "",
     ingredients: "",
     dishType: "",
     description: "",
-    price: ""
-  })
+    price: "",
+  });
 
-  const dishTypes = ["Appetizer", "Main Course", "Dessert", "Beverage", "Side Dish"]
+  const dishTypes = [
+    "Appetizer",
+    "Main Course",
+    "Dessert",
+    "Beverage",
+    "Side Dish",
+  ];
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = () => {
-    if (!formData.name || !formData.dishType || !formData.description) return
+    if (!formData.name || !formData.dishType || !formData.description) return;
 
     const newRecipe: Recipe = {
       id: editingRecipe ? editingRecipe.id : Date.now(),
       name: formData.name,
-      image: formData.image || "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
-      ingredients: formData.ingredients.split(",").map(i => i.trim()).filter(i => i),
+      image:
+        formData.image ||
+        "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
+      ingredients: formData.ingredients
+        .split(",")
+        .map((i) => i.trim())
+        .filter((i) => i),
       dishType: formData.dishType,
       description: formData.description,
-      price: formData.price ? parseFloat(formData.price) : undefined
-    }
+      price: formData.price ? parseFloat(formData.price) : undefined,
+    };
 
     if (editingRecipe) {
-      setRecipes(prev => prev.map(r => r.id === editingRecipe.id ? newRecipe : r))
+      setRecipes((prev) =>
+        prev.map((r) => (r.id === editingRecipe.id ? newRecipe : r))
+      );
     } else {
-      setRecipes(prev => [...prev, newRecipe])
+      setRecipes((prev) => [...prev, newRecipe]);
     }
 
-    resetForm()
-  }
+    resetForm();
+  };
 
   const resetForm = () => {
     setFormData({
@@ -91,28 +119,28 @@ export default function RecipesPage() {
       ingredients: "",
       dishType: "",
       description: "",
-      price: ""
-    })
-    setEditingRecipe(null)
-    setIsAddDialogOpen(false)
-  }
+      price: "",
+    });
+    setEditingRecipe(null);
+    setIsAddDialogOpen(false);
+  };
 
   const handleEdit = (recipe: Recipe) => {
-    setEditingRecipe(recipe)
+    setEditingRecipe(recipe);
     setFormData({
       name: recipe.name,
       image: recipe.image,
       ingredients: recipe.ingredients.join(", "),
       dishType: recipe.dishType,
       description: recipe.description,
-      price: recipe.price?.toString() || ""
-    })
-    setIsAddDialogOpen(true)
-  }
+      price: recipe.price?.toString() || "",
+    });
+    setIsAddDialogOpen(true);
+  };
 
   const handleDelete = (id: number) => {
-    setRecipes(prev => prev.filter(r => r.id !== id))
-  }
+    setRecipes((prev) => prev.filter((r) => r.id !== id));
+  };
 
   return (
     <div className="flex-1 p-6">
@@ -128,111 +156,150 @@ export default function RecipesPage() {
               Manage your hotel's recipe collection
             </p>
           </div>
-          
+
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
               <Button onClick={() => resetForm()}>
                 <Plus className="h-4 w-4 mr-2" />
-                Add Recipe
+                {editingRecipe ? "Edit Recipe" : "Add Recipe"}
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingRecipe ? "Edit Recipe" : "Add New Recipe"}
-                </DialogTitle>
-              </DialogHeader>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="name">Recipe Name *</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange("name", e.target.value)}
-                      placeholder="Enter recipe name"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="dishType">Dish Type *</Label>
-                    <Select value={formData.dishType} onValueChange={(value) => handleInputChange("dishType", value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select dish type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {dishTypes.map(type => (
-                          <SelectItem key={type} value={type}>{type}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="price">Price ($)</Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      step="0.01"
-                      value={formData.price}
-                      onChange={(e) => handleInputChange("price", e.target.value)}
-                      placeholder="0.00"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="image">Image URL</Label>
-                    <Input
-                      id="image"
-                      value={formData.image}
-                      onChange={(e) => handleInputChange("image", e.target.value)}
-                      placeholder="https://example.com/image.jpg"
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="ingredients">Ingredients</Label>
-                    <Textarea
-                      id="ingredients"
-                      value={formData.ingredients}
-                      onChange={(e) => handleInputChange("ingredients", e.target.value)}
-                      placeholder="Comma separated ingredients"
-                      className="min-h-[100px]"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="description">Description *</Label>
-                    <Textarea
-                      id="description"
-                      value={formData.description}
-                      onChange={(e) => handleInputChange("description", e.target.value)}
-                      placeholder="Describe the dish"
-                      className="min-h-[100px]"
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex justify-end gap-2 mt-6">
-                <Button variant="outline" onClick={resetForm}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSubmit}>
-                  {editingRecipe ? "Update Recipe" : "Add Recipe"}
-                </Button>
-              </div>
-            </DialogContent>
+
+            <DialogContent className="!w-[90vw] !max-w-none h-[90vh] p-6">
+  <DialogHeader>
+    <DialogTitle>
+      {editingRecipe ? "Edit Recipe" : "Add New Recipe"}
+    </DialogTitle>
+  </DialogHeader>
+
+  <div className="flex flex-col lg:flex-row h-full gap-4">
+    {/* Left Panel: Recipe Form + Chatbot */}
+    <div className="lg:w-2/3 flex flex-col h-full overflow-y-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-4">
+          {/* Recipe Name */}
+          <div>
+            <Label htmlFor="name">Recipe Name *</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => handleInputChange("name", e.target.value)}
+              placeholder="Enter recipe name"
+            />
+          </div>
+
+          {/* Dish Type */}
+          <div>
+            <Label htmlFor="dishType">Dish Type *</Label>
+            <Select
+              value={formData.dishType}
+              onValueChange={(value) => handleInputChange("dishType", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select dish type" />
+              </SelectTrigger>
+              <SelectContent>
+                {dishTypes.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Price */}
+          <div>
+            <Label htmlFor="price">Price ($)</Label>
+            <Input
+              id="price"
+              type="number"
+              step="0.01"
+              value={formData.price}
+              onChange={(e) => handleInputChange("price", e.target.value)}
+              placeholder="0.00"
+            />
+          </div>
+
+          {/* Image Upload */}
+          <div>
+            <Label htmlFor="image">Upload Image</Label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = () => {
+                  handleInputChange("image", reader.result as string);
+                };
+                reader.readAsDataURL(file);
+              }}
+              className="mt-1"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {/* Ingredients */}
+          <div>
+            <Label htmlFor="ingredients">Ingredients</Label>
+            <Textarea
+              id="ingredients"
+              value={formData.ingredients}
+              onChange={(e) => handleInputChange("ingredients", e.target.value)}
+              placeholder="Comma separated ingredients"
+              className="min-h-[100px]"
+            />
+          </div>
+
+          {/* Description */}
+          <div>
+            <Label htmlFor="description">Description *</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => handleInputChange("description", e.target.value)}
+              placeholder="Describe the dish"
+              className="min-h-[100px]"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Footer Buttons */}
+      <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
+        <Button variant="outline" onClick={resetForm}>
+          Cancel
+        </Button>
+        <Button onClick={handleSubmit}>
+          {editingRecipe ? "Update Recipe" : "Add Recipe"}
+        </Button>
+      </div>
+    </div>
+
+    {/* Right Panel: Chatbot Understanding */}
+    <div className="lg:w-1/3 border rounded p-4 overflow-y-auto h-full mt-4 lg:mt-0">
+      <h3 className="text-lg font-semibold mb-2">What Chatbot Understood</h3>
+      <div className="h-[calc(100%-2rem)] bg-gray-50 p-2 rounded">
+        {/* Placeholder */}
+      </div>
+    </div>
+  </div>
+</DialogContent>
+
           </Dialog>
         </div>
 
         {/* Recipe Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {recipes.map((recipe) => (
-            <Card key={recipe.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+            <Card
+              key={recipe.id}
+              className="overflow-hidden hover:shadow-lg transition-shadow"
+            >
               <div className="aspect-video relative">
                 <img
                   src={recipe.image}
@@ -243,7 +310,7 @@ export default function RecipesPage() {
                   <Badge variant="secondary">{recipe.dishType}</Badge>
                 </div>
               </div>
-              
+
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
                   <CardTitle className="text-lg">{recipe.name}</CardTitle>
@@ -254,23 +321,29 @@ export default function RecipesPage() {
                   )}
                 </div>
               </CardHeader>
-              
+
               <CardContent className="space-y-3">
                 <p className="text-sm text-muted-foreground line-clamp-2">
                   {recipe.description}
                 </p>
-                
+
                 {recipe.ingredients.length > 0 && (
                   <div>
                     <p className="text-xs font-medium text-muted-foreground mb-1">
                       Ingredients:
                     </p>
                     <div className="flex flex-wrap gap-1">
-                      {recipe.ingredients.slice(0, 3).map((ingredient, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {ingredient}
-                        </Badge>
-                      ))}
+                      {recipe.ingredients
+                        .slice(0, 3)
+                        .map((ingredient, index) => (
+                          <Badge
+                            key={index}
+                            variant="outline"
+                            className="text-xs"
+                          >
+                            {ingredient}
+                          </Badge>
+                        ))}
                       {recipe.ingredients.length > 3 && (
                         <Badge variant="outline" className="text-xs">
                           +{recipe.ingredients.length - 3} more
@@ -279,7 +352,7 @@ export default function RecipesPage() {
                     </div>
                   </div>
                 )}
-                
+
                 <div className="flex gap-2 pt-2">
                   <Button
                     variant="outline"
@@ -318,5 +391,5 @@ export default function RecipesPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

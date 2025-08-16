@@ -97,7 +97,7 @@ const Page = () => {
                     <span>{orderCounts[dish.name] || 0}</span>
                     <Button size="sm" onClick={() => handleIncrement(dish.name)}>+</Button>
                     <Button size="sm" variant="outline" onClick={() => handleAddOrder(dish.name)}>
-                      Add Order
+                      Add To Order
                     </Button>
                   </div>
                 </CardContent>
