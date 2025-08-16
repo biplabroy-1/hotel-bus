@@ -183,18 +183,18 @@ export default function RecipesPage() {
               </Button>
             </DialogTrigger>
 
-            <DialogContent className="!w-[90vw] !max-w-none h-[90vh] p-6">
+            <DialogContent className="!w-[90vw] !max-w-none h-[90vh] p-6 overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>
                   {editingRecipe ? "Edit Recipe" : "Add New Recipe"}
                 </DialogTitle>
               </DialogHeader>
 
-              <div className="flex flex-col lg:flex-row h-full gap-4">
+              <div className="flex flex-col lg:flex-row gap-4 overflow-y-auto h-full">
                 {/* Left Panel: Recipe Form + Chatbot */}
                 {/* Left Panel: Recipe Form + Chatbot */}
-                <div className="lg:w-2/3 flex flex-col h-full overflow-y-auto">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+                <div className="lg:w-2/3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-4">
                       {/* Recipe Name */}
                       <div>
@@ -395,11 +395,11 @@ export default function RecipesPage() {
                 </div>
 
                 {/* Right Panel: Chatbot Understanding */}
-                <div className="lg:w-1/3 border rounded p-4 overflow-y-auto mt-4 lg:mt-0 h-[90%]">
+                <div className="lg:w-1/3 border rounded p-4 mt-4 lg:mt-0">
                   <h3 className="text-lg font-semibold mb-2">
                     What Chatbot Understood
                   </h3>
-                  <div className="h-full bg-gray-50 p-2 rounded">
+                    <div className="p-2 rounded bg-muted text-muted-foreground">
                     {/* Placeholder */}
                   </div>
                 </div>
