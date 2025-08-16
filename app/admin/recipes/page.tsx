@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+// import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -172,7 +172,7 @@ export default function RecipesPage() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-muted-foreground mt-2">
-              Manage your hotel's recipe collection
+              Manage your Hotel recipe collection
             </p>
           </div>
 
