@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus, Edit, Trash2, ChefHat } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 type Recipe = {
   id: number;
@@ -59,6 +60,15 @@ export default function RecipesPage() {
     },
   ]);
 
+  const [humanInput, setHumanInput] = useState("");
+  const [aiInput, setAiInput] = useState("");
+  const [humanMessages, setHumanMessages] = useState<
+    { role: "user" | "system"; text: string }[]
+  >([]);
+  const [aiMessages, setAiMessages] = useState<
+    { role: "user" | "system"; text: string }[]
+  >([]);
+
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
@@ -78,6 +88,14 @@ export default function RecipesPage() {
     "Beverage",
     "Side Dish",
   ];
+
+  const handleSaveDraft = () => {
+    // For now, just log the current form data
+    console.log("Draft saved:", formData);
+
+    // Later you can store it in localStorage, DB, or API
+    localStorage.setItem("recipeDraft", JSON.stringify(formData));
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -166,130 +184,227 @@ export default function RecipesPage() {
             </DialogTrigger>
 
             <DialogContent className="!w-[90vw] !max-w-none h-[90vh] p-6">
-  <DialogHeader>
-    <DialogTitle>
-      {editingRecipe ? "Edit Recipe" : "Add New Recipe"}
-    </DialogTitle>
-  </DialogHeader>
+              <DialogHeader>
+                <DialogTitle>
+                  {editingRecipe ? "Edit Recipe" : "Add New Recipe"}
+                </DialogTitle>
+              </DialogHeader>
 
-  <div className="flex flex-col lg:flex-row h-full gap-4">
-    {/* Left Panel: Recipe Form + Chatbot */}
-    <div className="lg:w-2/3 flex flex-col h-full overflow-y-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-4">
-          {/* Recipe Name */}
-          <div>
-            <Label htmlFor="name">Recipe Name *</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-              placeholder="Enter recipe name"
-            />
-          </div>
+              <div className="flex flex-col lg:flex-row h-full gap-4">
+                {/* Left Panel: Recipe Form + Chatbot */}
+                {/* Left Panel: Recipe Form + Chatbot */}
+                <div className="lg:w-2/3 flex flex-col h-full overflow-y-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+                    <div className="space-y-4">
+                      {/* Recipe Name */}
+                      <div>
+                        <Label htmlFor="name">Recipe Name *</Label>
+                        <Input
+                          id="name"
+                          value={formData.name}
+                          onChange={(e) =>
+                            handleInputChange("name", e.target.value)
+                          }
+                          placeholder="Enter recipe name"
+                        />
+                      </div>
 
-          {/* Dish Type */}
-          <div>
-            <Label htmlFor="dishType">Dish Type *</Label>
-            <Select
-              value={formData.dishType}
-              onValueChange={(value) => handleInputChange("dishType", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select dish type" />
-              </SelectTrigger>
-              <SelectContent>
-                {dishTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+                      {/* Dish Type */}
+                      <div>
+                        <Label htmlFor="dishType">Dish Type *</Label>
+                        <Select
+                          value={formData.dishType}
+                          onValueChange={(value) =>
+                            handleInputChange("dishType", value)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select dish type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {dishTypes.map((type) => (
+                              <SelectItem key={type} value={type}>
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-          {/* Price */}
-          <div>
-            <Label htmlFor="price">Price ($)</Label>
-            <Input
-              id="price"
-              type="number"
-              step="0.01"
-              value={formData.price}
-              onChange={(e) => handleInputChange("price", e.target.value)}
-              placeholder="0.00"
-            />
-          </div>
+                      {/* Price */}
+                      <div>
+                        <Label htmlFor="price">Price ($)</Label>
+                        <Input
+                          id="price"
+                          type="number"
+                          step="0.01"
+                          value={formData.price}
+                          onChange={(e) =>
+                            handleInputChange("price", e.target.value)
+                          }
+                          placeholder="0.00"
+                        />
+                      </div>
 
-          {/* Image Upload */}
-          <div>
-            <Label htmlFor="image">Upload Image</Label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
+                      {/* Image Upload */}
+                      <div>
+                        <Label htmlFor="image">Upload Image</Label>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                              handleInputChange(
+                                "image",
+                                reader.result as string
+                              );
+                            };
+                            reader.readAsDataURL(file);
+                          }}
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
 
-                const reader = new FileReader();
-                reader.onload = () => {
-                  handleInputChange("image", reader.result as string);
-                };
-                reader.readAsDataURL(file);
-              }}
-              className="mt-1"
-            />
-          </div>
-        </div>
+                    {/* human/AI tabs */}
+                    <div>                    
+                    <div className="space-y-4">
+                      <Tabs defaultValue="Human" className="w-full max-w-md">
+                        <TabsList className="w-full">
+                          <TabsTrigger value="Human" className="w-1/2">
+                            Human
+                          </TabsTrigger>
+                          <TabsTrigger value="AI" className="w-1/2">
+                            AI
+                          </TabsTrigger>
+                        </TabsList>
 
-        <div className="space-y-4">
-          {/* Ingredients */}
-          <div>
-            <Label htmlFor="ingredients">Ingredients</Label>
-            <Textarea
-              id="ingredients"
-              value={formData.ingredients}
-              onChange={(e) => handleInputChange("ingredients", e.target.value)}
-              placeholder="Comma separated ingredients"
-              className="min-h-[100px]"
-            />
-          </div>
+                        {/* Human Tab */}
+                        <TabsContent value="Human" className="space-y-3">
+                          <div className="space-y-2">
+                            <Textarea
+                              placeholder="Write your thoughts..."
+                              value={humanInput}
+                              onChange={(e) => setHumanInput(e.target.value)}
+                              className="h-64 resize-none"
+                            />
+                            <div className="flex gap-2">
+                              <Button
+                                className="flex-1"
+                                variant="secondary"
+                                onClick={() =>
+                                  setHumanMessages([
+                                    ...humanMessages,
+                                    {
+                                      role: "system",
+                                      text: "Summary feature coming soon...",
+                                    },
+                                  ])
+                                }
+                              >
+                                Summarize
+                              </Button>
+                              <Button
+                                className="flex-1"
+                                onClick={() => {
+                                  if (!humanInput.trim()) return;
+                                  setHumanMessages([
+                                    ...humanMessages,
+                                    { role: "user", text: humanInput },
+                                  ]);
+                                  setHumanInput("");
+                                }}
+                              >
+                                Submit
+                              </Button>
+                            </div>
+                          </div>
+                        </TabsContent>
 
-          {/* Description */}
-          <div>
-            <Label htmlFor="description">Description *</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
-              placeholder="Describe the dish"
-              className="min-h-[100px]"
-            />
-          </div>
-        </div>
-      </div>
+                        {/* AI Chat Tab */}
+                        <TabsContent value="AI" className="space-y-3">
+                          {/* Chat Area */}
+                          <ScrollArea className="h-64 border rounded p-3 space-y-2 bg-muted">
+                            {aiMessages.length === 0 ? (
+                              <p className="text-sm text-muted-foreground text-center">
+                                No AI messages yet...
+                              </p>
+                            ) : (
+                              aiMessages.map((msg, i) => (
+                                <div
+                                  key={i}
+                                  className={`p-2 rounded-md max-w-[80%] ${
+                                    msg.role === "user"
+                                      ? "bg-primary text-primary-foreground ml-auto"
+                                      : "bg-secondary mr-auto"
+                                  }`}
+                                >
+                                  {msg.text}
+                                </div>
+                              ))
+                            )}
+                          </ScrollArea>
 
-      {/* Footer Buttons */}
-      <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
-        <Button variant="outline" onClick={resetForm}>
-          Cancel
-        </Button>
-        <Button onClick={handleSubmit}>
-          {editingRecipe ? "Update Recipe" : "Add Recipe"}
-        </Button>
-      </div>
-    </div>
+                          {/* Input + + Button */}
+                          <div className="flex items-center gap-2">
+                            <Input
+                              placeholder="Ask AI..."
+                              value={aiInput}
+                              onChange={(e) => setAiInput(e.target.value)}
+                            />
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => {
+                                if (!aiInput.trim()) return;
+                                setAiMessages([
+                                  ...aiMessages,
+                                  { role: "user", text: aiInput },
+                                ]);
+                                setAiInput("");
+                              }}
+                            >
+                              +
+                            </Button>
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+                    </div>
+                    </div>
 
-    {/* Right Panel: Chatbot Understanding */}
-    <div className="lg:w-1/3 border rounded p-4 overflow-y-auto h-full mt-4 lg:mt-0">
-      <h3 className="text-lg font-semibold mb-2">What Chatbot Understood</h3>
-      <div className="h-[calc(100%-2rem)] bg-gray-50 p-2 rounded">
-        {/* Placeholder */}
-      </div>
-    </div>
-  </div>
-</DialogContent>
+                    <div>
+                      
+                    </div>
+                  </div>
 
+                  {/* Footer Buttons (stick bottom-left) */}
+                  <div className="flex justify-start gap-2 mt-4">
+                    <Button variant="outline" onClick={resetForm}>
+                      Cancel
+                    </Button>
+                    <Button variant="secondary" onClick={handleSaveDraft}>
+                      Save Draft
+                    </Button>
+                    <Button onClick={handleSubmit}>
+                      {editingRecipe ? "Update Recipe" : "Add Recipe"}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Right Panel: Chatbot Understanding */}
+                <div className="lg:w-1/3 border rounded p-4 overflow-y-auto mt-4 lg:mt-0 h-[90%]">
+                  <h3 className="text-lg font-semibold mb-2">
+                    What Chatbot Understood
+                  </h3>
+                  <div className="h-full bg-gray-50 p-2 rounded">
+                    {/* Placeholder */}
+                  </div>
+                </div>
+              </div>
+            </DialogContent>
           </Dialog>
         </div>
 

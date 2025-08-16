@@ -29,10 +29,10 @@ function SidebarContent() {
   const pathname = usePathname()
 
   const tabs = [
-    { id: "recipes", label: "Recipes", icon: Home, path: "/admin/recipes" },
     { id: "kyc", label: "KYC", icon: UserCheck, path: "/admin/kyc" },
-    { id: "hotels", label: "Hotels", icon: Building2, path: "/admin/hotels" },
+    { id: "recipes", label: "Recipes", icon: Home, path: "/admin/recipes" },
     { id: "qr", label: "QR Codes", icon: QrCode, path: "/admin/qr" },
+    { id: "hotels", label: "Hotels", icon: Building2, path: "/admin/hotels" },
   ]
 
   return (
@@ -84,7 +84,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile Menu Button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
+      <div className="lg:hidden fixed top-2 left-2 z-50">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon">
