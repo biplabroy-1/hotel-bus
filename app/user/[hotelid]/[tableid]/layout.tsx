@@ -1,19 +1,19 @@
 "use client";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
+import { use } from "react";
 
 interface TableLayoutProps {
   children: React.ReactNode;
-  params: {
+  params: Promise<{
     hotelid: string;
     tableid: string;
-  };
+  }>;
 }
 
 export default function TableLayout({ children, params }: TableLayoutProps) {
-  const { hotelid, tableid } = params;
+  const { hotelid, tableid } = use(params);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -32,30 +32,14 @@ export default function TableLayout({ children, params }: TableLayoutProps) {
           if (value === "recommendations") router.push(recommendationsPath);
           else if (value === "chat") router.push(chatPath);
         }}
-        className="w-full"
+        className="w-full px-4"
       >
-        <TabsList className="w-full justify-center gap-2 bg-muted p-1 rounded-lg">
-          <TabsTrigger
-            value="recommendations"
-            className={cn(
-              "px-4 py-6 rounded-md transition-colors",
-              "data-[state=active]:bg-black data-[state=active]:text-white shadow-md",
-              "dark:data-[state=active]:bg-white dark:data-[state=active]:text-black",
-              "hover:bg-accent hover:text-accent-foreground"
-            )}
-          >
+        <TabsList className="w-full justify-center gap-2 bg-muted p-1  rounded-4xl">
+          <TabsTrigger value="recommendations" className="bg-black rounded-2xl">
             Recommendations
           </TabsTrigger>
 
-          <TabsTrigger
-            value="chat"
-            className={cn(
-              "px-4 py-6 rounded-md transition-colors",
-              "data-[state=active]:bg-black data-[state=active]:text-white shadow-md",
-              "dark:data-[state=active]:bg-white dark:data-[state=active]:text-black",
-              "hover:bg-accent hover:text-accent-foreground"
-            )}
-          >
+          <TabsTrigger value="chat" className="bg-black rounded-2xl">
             Chat
           </TabsTrigger>
         </TabsList>
