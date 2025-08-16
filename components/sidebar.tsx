@@ -1,15 +1,17 @@
-"use client"
+// components/sidebar.tsx
+"use client";
 
-import { useState } from "react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Home, FileText, UserCheck, Sun, Moon, QrCode, Building2, Menu } from "lucide-react"
-import { useTheme } from "next-themes"
-import { useRouter, usePathname } from "next/navigation"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Home, FileText, UserCheck, Sun, Moon, QrCode, Building2, Menu } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useRouter, usePathname } from "next/navigation";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { SignOutButton, UserButton } from "@clerk/nextjs";  // ⬅️ Import
 
 function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme } = useTheme();
 
   return (
     <Button
@@ -21,19 +23,19 @@ function ThemeToggle() {
       <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
       <span className="sr-only">Toggle theme</span>
     </Button>
-  )
+  );
 }
 
 function SidebarContent() {
-  const router = useRouter()
-  const pathname = usePathname()
+  const router = useRouter();
+  const pathname = usePathname();
 
   const tabs = [
     { id: "kyc", label: "KYC", icon: UserCheck, path: "/admin/kyc" },
     { id: "recipes", label: "Recipes", icon: Home, path: "/admin" },
     { id: "qr", label: "QR Codes", icon: QrCode, path: "/admin/qr" },
     { id: "hotels", label: "Hotels", icon: Building2, path: "/admin/hotels" },
-  ]
+  ];
 
   return (
     <div className="flex flex-col h-full">
@@ -47,8 +49,8 @@ function SidebarContent() {
       <div className="flex-1 p-4">
         <nav className="space-y-2">
           {tabs.map((tab) => {
-            const Icon = tab.icon
-            const isActive = pathname === tab.path
+            const Icon = tab.icon;
+            const isActive = pathname === tab.path;
 
             return (
               <Button
@@ -63,23 +65,22 @@ function SidebarContent() {
                 <Icon className="h-5 w-5" />
                 {tab.label}
               </Button>
-            )
+            );
           })}
         </nav>
       </div>
 
-      {/* Theme Toggle */}
-      <div className="p-4 border-t border-border mt-auto">
-        <div className="flex justify-center">
-          <ThemeToggle />
-        </div>
+      {/* Footer Section with Theme + User */}
+      <div className="p-4 border-t border-border mt-auto flex items-center justify-between">
+        <ThemeToggle />
+        <UserButton afterSignOutUrl="/" /> {/* ⬅️ Clerk User Button */}
       </div>
     </div>
-  )
+  );
 }
 
 export default function Sidebar() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
@@ -101,7 +102,8 @@ export default function Sidebar() {
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex h-screen w-64 bg-card border-r border-border flex-col">
         <SidebarContent />
+        {/* <SignOutButton/> */}
       </aside>
     </>
-  )
+  );
 }
