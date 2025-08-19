@@ -37,7 +37,7 @@ type Dish = {
 };
 
 export default function RecipesPage() {
-  const [recipes, setRecipes] = useState<Recipe[]>([
+  const [recipes, setRecipes] = useState<Dish[]>([
     {
       id: 1,
       name: "Butter Chicken",
@@ -105,7 +105,7 @@ export default function RecipesPage() {
     if (!formData.name || !formData.dishType || !formData.description) return;
 
     const newRecipe: Dish = {
-      id: editingDish ? editingRecipe.id : Date.now(),
+      id: editingRecipe ? editingRecipe.id : Date.now(),
       name: formData.name,
       image:
         formData.image ||
@@ -121,7 +121,7 @@ export default function RecipesPage() {
 
     if (editingRecipe) {
       setRecipes((prev) =>
-        prev.map((r) => (r.id === editingRecipe.id ? newDish : r))
+        prev.map((r) => (r.id === editingRecipe.id ? newRecipe : r))
       );
     } else {
       setRecipes((prev) => [...prev, newRecipe]);
@@ -143,7 +143,7 @@ export default function RecipesPage() {
     setIsAddDialogOpen(false);
   };
 
-  const handleEdit = (recipe: Recipe) => {
+  const handleEdit = (recipe: Dish) => {
     setEditingRecipe(recipe);
     setFormData({
       name: recipe.name,
@@ -180,14 +180,14 @@ export default function RecipesPage() {
               <DialogTrigger asChild>
                 <Button onClick={() => resetForm()}>
                   <Plus className="h-4 w-4 mr-2" />
-                  {editingDish ? "Edit Recipe" : "Add Recipe"}
+                  {editingRecipe ? "Edit Recipe" : "Add Recipe"}
                 </Button>
               </DialogTrigger>
 
               <DialogContent className="!w-[90vw] !max-w-none h-[90vh] p-6 overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>
-                    {editingDish ? "Edit Recipe" : "Add New Recipe"}
+                    {editingRecipe ? "Edit Recipe" : "Add New Recipe"}
                   </DialogTitle>
                 </DialogHeader>
 
@@ -389,7 +389,7 @@ export default function RecipesPage() {
                         Save Draft
                       </Button>
                       <Button onClick={handleSubmit}>
-                        {editingDish ? "Update Recipe" : "Add Recipe"}
+                        {editingRecipe ? "Update Recipe" : "Add Recipe"}
                       </Button>
                     </div>
                   </div>
