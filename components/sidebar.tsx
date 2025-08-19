@@ -35,6 +35,7 @@ function SidebarContent() {
     { id: "recipes", label: "Recipes", icon: Home, path: "/admin" },
     { id: "qr", label: "QR Codes", icon: QrCode, path: "/admin/qr" },
     { id: "hotels", label: "Hotels", icon: Building2, path: "/admin/hotels" },
+    { id: "users", label: "Users", icon: UserCheck, path: "/admin/users" },
   ];
 
   return (

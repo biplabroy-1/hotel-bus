@@ -26,7 +26,7 @@ import {
 import { Plus, Edit, Trash2, ChefHat, Filter } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
-type Recipe = {
+type Dish = {
   id: number;
   name: string;
   image: string;
@@ -71,7 +71,7 @@ export default function RecipesPage() {
 
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
+  const [editingRecipe, setEditingRecipe] = useState<Dish | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     image: "",
@@ -104,8 +104,8 @@ export default function RecipesPage() {
   const handleSubmit = () => {
     if (!formData.name || !formData.dishType || !formData.description) return;
 
-    const newRecipe: Recipe = {
-      id: editingRecipe ? editingRecipe.id : Date.now(),
+    const newRecipe: Dish = {
+      id: editingDish ? editingRecipe.id : Date.now(),
       name: formData.name,
       image:
         formData.image ||
@@ -121,7 +121,7 @@ export default function RecipesPage() {
 
     if (editingRecipe) {
       setRecipes((prev) =>
-        prev.map((r) => (r.id === editingRecipe.id ? newRecipe : r))
+        prev.map((r) => (r.id === editingRecipe.id ? newDish : r))
       );
     } else {
       setRecipes((prev) => [...prev, newRecipe]);
@@ -164,255 +164,254 @@ export default function RecipesPage() {
     <div className="flex-1 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-            <h1 className="text-3xl font-bold flex items-center gap-2 mb-3">
-              <ChefHat className="h-8 w-8 text-primary" />
-              Recipe Management
-            </h1>
-            <div className="flex flex-col">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <p className="text-muted-foreground mt-2">
-              Manage your Hotel recipe collection
-            </p>
-          </div>
+        <h1 className="text-3xl font-bold flex items-center gap-2 mb-3">
+          <ChefHat className="h-8 w-8 text-primary" />
+          DishManagement
+        </h1>
+        <div className="flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-muted-foreground mt-2">
+                Manage your Hotel Dish collection
+              </p>
+            </div>
 
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={() => resetForm()}>
-                <Plus className="h-4 w-4 mr-2" />
-                {editingRecipe ? "Edit Recipe" : "Add Recipe"}
-              </Button>
-            </DialogTrigger>
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={() => resetForm()}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  {editingDish ? "Edit Recipe" : "Add Recipe"}
+                </Button>
+              </DialogTrigger>
 
-            <DialogContent className="!w-[90vw] !max-w-none h-[90vh] p-6 overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingRecipe ? "Edit Recipe" : "Add New Recipe"}
-                </DialogTitle>
-              </DialogHeader>
+              <DialogContent className="!w-[90vw] !max-w-none h-[90vh] p-6 overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>
+                    {editingDish ? "Edit Recipe" : "Add New Recipe"}
+                  </DialogTitle>
+                </DialogHeader>
 
-              <div className="flex flex-col lg:flex-row gap-4 overflow-y-auto h-full">
-                {/* Left Panel: Recipe Form + Chatbot */}
-                {/* Left Panel: Recipe Form + Chatbot */}
-                <div className="lg:w-2/3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-4">
-                      {/* Recipe Name */}
-                      <div>
-                        <Label htmlFor="name">Recipe Name *</Label>
-                        <Input
-                          id="name"
-                          value={formData.name}
-                          onChange={(e) =>
-                            handleInputChange("name", e.target.value)
-                          }
-                          placeholder="Enter recipe name"
-                        />
+                <div className="flex flex-col lg:flex-row gap-4 overflow-y-auto h-full">
+                  {/* Left Panel: Dish Form + Chatbot */}
+                  {/* Left Panel: Dish Form + Chatbot */}
+                  <div className="lg:w-2/3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-4">
+                        {/* Dish Name */}
+                        <div>
+                          <Label htmlFor="name">Dish Name *</Label>
+                          <Input
+                            id="name"
+                            value={formData.name}
+                            onChange={(e) =>
+                              handleInputChange("name", e.target.value)
+                            }
+                            placeholder="Enter Dish name"
+                          />
+                        </div>
+
+                        {/* Dish Type */}
+                        <div>
+                          <Label htmlFor="dishType">Dish Type *</Label>
+                          <Select
+                            value={formData.dishType}
+                            onValueChange={(value) =>
+                              handleInputChange("dishType", value)
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select dish type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {dishTypes.map((type) => (
+                                <SelectItem key={type} value={type}>
+                                  {type}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* Price */}
+                        <div>
+                          <Label htmlFor="price">Price ($)</Label>
+                          <Input
+                            id="price"
+                            type="number"
+                            step="0.01"
+                            value={formData.price}
+                            onChange={(e) =>
+                              handleInputChange("price", e.target.value)
+                            }
+                            placeholder="0.00"
+                          />
+                        </div>
+
+                        {/* Image Upload */}
+                        <div>
+                          <Label htmlFor="image">Upload Image</Label>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              const reader = new FileReader();
+                              reader.onload = () => {
+                                handleInputChange(
+                                  "image",
+                                  reader.result as string
+                                );
+                              };
+                              reader.readAsDataURL(file);
+                            }}
+                            className="mt-1"
+                          />
+                        </div>
                       </div>
 
-                      {/* Dish Type */}
+                      {/* human/AI tabs */}
                       <div>
-                        <Label htmlFor="dishType">Dish Type *</Label>
-                        <Select
-                          value={formData.dishType}
-                          onValueChange={(value) =>
-                            handleInputChange("dishType", value)
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select dish type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {dishTypes.map((type) => (
-                              <SelectItem key={type} value={type}>
-                                {type}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                        <div className="space-y-4">
+                          <Tabs defaultValue="Human" className="w-full max-w-md">
+                            <TabsList className="w-full">
+                              <TabsTrigger value="Human" className="w-1/2">
+                                Human
+                              </TabsTrigger>
+                              <TabsTrigger value="AI" className="w-1/2">
+                                AI
+                              </TabsTrigger>
+                            </TabsList>
 
-                      {/* Price */}
-                      <div>
-                        <Label htmlFor="price">Price ($)</Label>
-                        <Input
-                          id="price"
-                          type="number"
-                          step="0.01"
-                          value={formData.price}
-                          onChange={(e) =>
-                            handleInputChange("price", e.target.value)
-                          }
-                          placeholder="0.00"
-                        />
-                      </div>
-
-                      {/* Image Upload */}
-                      <div>
-                        <Label htmlFor="image">Upload Image</Label>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
-                            const reader = new FileReader();
-                            reader.onload = () => {
-                              handleInputChange(
-                                "image",
-                                reader.result as string
-                              );
-                            };
-                            reader.readAsDataURL(file);
-                          }}
-                          className="mt-1"
-                        />
-                      </div>
-                    </div>
-
-                    {/* human/AI tabs */}
-                    <div>                    
-                    <div className="space-y-4">
-                      <Tabs defaultValue="Human" className="w-full max-w-md">
-                        <TabsList className="w-full">
-                          <TabsTrigger value="Human" className="w-1/2">
-                            Human
-                          </TabsTrigger>
-                          <TabsTrigger value="AI" className="w-1/2">
-                            AI
-                          </TabsTrigger>
-                        </TabsList>
-
-                        {/* Human Tab */}
-                        <TabsContent value="Human" className="space-y-3">
-                          <div className="space-y-2">
-                            <Textarea
-                              placeholder="Write your thoughts..."
-                              value={humanInput}
-                              onChange={(e) => setHumanInput(e.target.value)}
-                              className="h-64 resize-none"
-                            />
-                            <div className="flex gap-2">
-                              <Button
-                                className="flex-1"
-                                variant="secondary"
-                                onClick={() =>
-                                  setHumanMessages([
-                                    ...humanMessages,
-                                    {
-                                      role: "system",
-                                      text: "Summary feature coming soon...",
-                                    },
-                                  ])
-                                }
-                              >
-                                Summarize
-                              </Button>
-                              <Button
-                                className="flex-1"
-                                onClick={() => {
-                                  if (!humanInput.trim()) return;
-                                  setHumanMessages([
-                                    ...humanMessages,
-                                    { role: "user", text: humanInput },
-                                  ]);
-                                  setHumanInput("");
-                                }}
-                              >
-                                Submit
-                              </Button>
-                            </div>
-                          </div>
-                        </TabsContent>
-
-                        {/* AI Chat Tab */}
-                        <TabsContent value="AI" className="space-y-3">
-                          {/* Chat Area */}
-                          <ScrollArea className="h-64 border rounded p-3 space-y-2 bg-muted">
-                            {aiMessages.length === 0 ? (
-                              <p className="text-sm text-muted-foreground text-center">
-                                No AI messages yet...
-                              </p>
-                            ) : (
-                              aiMessages.map((msg, i) => (
-                                <div
-                                  key={i}
-                                  className={`p-2 rounded-md max-w-[80%] ${
-                                    msg.role === "user"
-                                      ? "bg-primary text-primary-foreground ml-auto"
-                                      : "bg-secondary mr-auto"
-                                  }`}
-                                >
-                                  {msg.text}
+                            {/* Human Tab */}
+                            <TabsContent value="Human" className="space-y-3">
+                              <div className="space-y-2">
+                                <Textarea
+                                  placeholder="Write your thoughts..."
+                                  value={humanInput}
+                                  onChange={(e) => setHumanInput(e.target.value)}
+                                  className="h-64 resize-none"
+                                />
+                                <div className="flex gap-2">
+                                  <Button
+                                    className="flex-1"
+                                    variant="secondary"
+                                    onClick={() =>
+                                      setHumanMessages([
+                                        ...humanMessages,
+                                        {
+                                          role: "system",
+                                          text: "Summary feature coming soon...",
+                                        },
+                                      ])
+                                    }
+                                  >
+                                    Summarize
+                                  </Button>
+                                  <Button
+                                    className="flex-1"
+                                    onClick={() => {
+                                      if (!humanInput.trim()) return;
+                                      setHumanMessages([
+                                        ...humanMessages,
+                                        { role: "user", text: humanInput },
+                                      ]);
+                                      setHumanInput("");
+                                    }}
+                                  >
+                                    Submit
+                                  </Button>
                                 </div>
-                              ))
-                            )}
-                          </ScrollArea>
+                              </div>
+                            </TabsContent>
 
-                          {/* Input + + Button */}
-                          <div className="flex items-center gap-2">
-                            <Input
-                              placeholder="Ask AI..."
-                              value={aiInput}
-                              onChange={(e) => setAiInput(e.target.value)}
-                            />
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => {
-                                if (!aiInput.trim()) return;
-                                setAiMessages([
-                                  ...aiMessages,
-                                  { role: "user", text: aiInput },
-                                ]);
-                                setAiInput("");
-                              }}
-                            >
-                              +
-                            </Button>
-                          </div>
-                        </TabsContent>
-                      </Tabs>
-                    </div>
+                            {/* AI Chat Tab */}
+                            <TabsContent value="AI" className="space-y-3">
+                              {/* Chat Area */}
+                              <ScrollArea className="h-64 border rounded p-3 space-y-2 bg-muted">
+                                {aiMessages.length === 0 ? (
+                                  <p className="text-sm text-muted-foreground text-center">
+                                    No AI messages yet...
+                                  </p>
+                                ) : (
+                                  aiMessages.map((msg, i) => (
+                                    <div
+                                      key={i}
+                                      className={`p-2 rounded-md max-w-[80%] ${msg.role === "user"
+                                        ? "bg-primary text-primary-foreground ml-auto"
+                                        : "bg-secondary mr-auto"
+                                        }`}
+                                    >
+                                      {msg.text}
+                                    </div>
+                                  ))
+                                )}
+                              </ScrollArea>
+
+                              {/* Input + + Button */}
+                              <div className="flex items-center gap-2">
+                                <Input
+                                  placeholder="Ask AI..."
+                                  value={aiInput}
+                                  onChange={(e) => setAiInput(e.target.value)}
+                                />
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  onClick={() => {
+                                    if (!aiInput.trim()) return;
+                                    setAiMessages([
+                                      ...aiMessages,
+                                      { role: "user", text: aiInput },
+                                    ]);
+                                    setAiInput("");
+                                  }}
+                                >
+                                  +
+                                </Button>
+                              </div>
+                            </TabsContent>
+                          </Tabs>
+                        </div>
+                      </div>
+
+                      <div>
+
+                      </div>
                     </div>
 
-                    <div>
-                      
+                    {/* Footer Buttons (stick bottom-left) */}
+                    <div className="flex justify-start gap-2 mt-4">
+                      <Button variant="outline" onClick={resetForm}>
+                        Cancel
+                      </Button>
+                      <Button variant="secondary" onClick={handleSaveDraft}>
+                        Save Draft
+                      </Button>
+                      <Button onClick={handleSubmit}>
+                        {editingDish ? "Update Recipe" : "Add Recipe"}
+                      </Button>
                     </div>
                   </div>
 
-                  {/* Footer Buttons (stick bottom-left) */}
-                  <div className="flex justify-start gap-2 mt-4">
-                    <Button variant="outline" onClick={resetForm}>
-                      Cancel
-                    </Button>
-                    <Button variant="secondary" onClick={handleSaveDraft}>
-                      Save Draft
-                    </Button>
-                    <Button onClick={handleSubmit}>
-                      {editingRecipe ? "Update Recipe" : "Add Recipe"}
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Right Panel: Chatbot Understanding */}
-                <div className="lg:w-1/3 border rounded p-4 mt-4 lg:mt-0">
-                  <h3 className="text-lg font-semibold mb-2">
-                    What Chatbot Understood
-                  </h3>
+                  {/* Right Panel: Chatbot Understanding */}
+                  <div className="lg:w-1/3 border rounded p-4 mt-4 lg:mt-0">
+                    <h3 className="text-lg font-semibold mb-2">
+                      What Chatbot Understood
+                    </h3>
                     <div className="p-2 rounded bg-muted text-muted-foreground">
-                    {/* Placeholder */}
+                      {/* Placeholder */}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+              </DialogContent>
+            </Dialog>
           </div>
           <div className="flex items-center gap-2 mb-4">
             {/* Search Bar */}
-            <Input 
-              type="text" 
-              placeholder="Search recipes..." 
+            <Input
+              type="text"
+              placeholder="Search recipes..."
               className="flex-1"
             />
             {/* Filter Button */}
@@ -422,7 +421,7 @@ export default function RecipesPage() {
           </div>
         </div>
 
-        {/* Recipe Grid */}
+        {/* Dish Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {recipes.map((recipe) => (
             <Card
@@ -514,7 +513,7 @@ export default function RecipesPage() {
               No recipes yet
             </h3>
             <p className="text-sm text-muted-foreground">
-              Start by adding your first recipe to the collection
+              Start by adding your first Dish to the collection
             </p>
           </div>
         )}

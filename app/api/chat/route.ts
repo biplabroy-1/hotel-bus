@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { Groq } from "groq-sdk";
+import { streamText } from "ai";
+import { groq } from "@ai-sdk/groq";
 
 export async function POST(req: Request) {
   try {
@@ -11,24 +12,42 @@ export async function POST(req: Request) {
 
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ reply: "GROQ API key is missing from environment variables." }, { status: 500 });
+      return NextResponse.json(
+        { reply: "GROQ API key is missing from environment variables." },
+        { status: 500 }
+      );
     }
 
-    const groq = new Groq({ apiKey });
-
-    const response = await groq.chat.completions.create({
-      model: "llama3-70b-8192", // Replace with your desired model
-      messages: [
-        { role: "system", content: "You are a helpful assistant." },
-        { role: "user", content: message },
-      ],
+    // Create AI response stream
+    const response = await streamText({
+      model: groq("llama3-70b-8192"),
+      prompt: message,
+      system: "You are a helpful assistant.",
     });
 
-    const reply = response.choices[0]?.message.content || "I'm sorry, I couldn't understand that.";
+    // Convert to SSE format
+    const stream = new ReadableStream({
+      async start(controller) {
+        const encoder = new TextEncoder();
+        for await (const chunk of response.textStream) {
+          controller.enqueue(encoder.encode(`data: ${chunk}\n\n`));
+        }
+        controller.close();
+      },
+    });
 
-    return NextResponse.json({ reply });
+    return new NextResponse(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+      },
+    });
   } catch (error) {
     console.error("Chat API Error:", error);
-    return NextResponse.json({ reply: "An error occurred. Please try again later." }, { status: 500 });
+    return NextResponse.json(
+      { reply: "An error occurred. Please try again later." },
+      { status: 500 }
+    );
   }
 }

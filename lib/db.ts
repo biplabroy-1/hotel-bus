@@ -7,3 +7,12 @@ await mongoose.connect(process.env.DATABASE_URL || "").catch((error) => {
 const client = mongoose.connection.getClient().db("myDB");
 
 export { client };
+
+export default async function connectDB() {
+    try {
+        await mongoose.connect(process.env.DATABASE_URL || "");
+        console.log("Connected to MongoDB");
+    } catch (error) {
+        console.error("Error connecting to MongoDB:", error);
+    }
+}
