@@ -2,104 +2,148 @@
 
 import connectDB from "@/lib/db";
 import Hotel, { THotel } from "@/models/Hotels";
-import { id } from "zod/v4/locales";
+import { auth } from "@clerk/nextjs/server";
 
 export async function createHotel(data: THotel) {
-    await connectDB();
-    const hotel = await Hotel.create({
-        ownerId: data.ownerId,
-        hotelWebsite: data.hotelWebsite,
-        hotelId: data.hotelId,
-        name: data.name,
-        typeOfCuisine: data.typeOfCuisine,
-        dishes: data.dishes,
-        location: data.location
-    });
-    return hotel;
+    try {
+        const user = await auth();
+        await connectDB();
+        const hotel = await Hotel.create({
+            ownerId: user.userId,
+            hotelWebsite: data.hotelWebsite,
+            hotelId: data.hotelId,
+            name: data.name,
+            typeOfCuisine: data.typeOfCuisine,
+            dishes: data.dishes,
+            location: data.location
+        });
+        return hotel;
+    } catch (error) {
+        throw new Error("Hotel not found");
+    }
 }
 
 export async function getHotels() {
-    await connectDB();
-    const hotels = await Hotel.find().sort({ createdAt: -1 });
-    if (!hotels) {
+    try {
+        const user = await auth();
+        await connectDB();
+        const hotels = await Hotel.find({ ownerId: user.userId }).sort({ createdAt: -1 });
+        if (!hotels) {
+            throw new Error("Hotels not found");
+        }
+        return hotels;
+    } catch (error) {
         throw new Error("Hotels not found");
     }
-    return hotels;
 }
 
 export async function getHotelsByOwner(ownerId: string) {
-    await connectDB();
-    const hotel = await Hotel.find({ ownerId }).sort({ createdAt: -1 });
-    if (!hotel) {
+    try {
+        const user = await auth();
+        await connectDB();
+        const hotel = await Hotel.find({ ownerId: user.userId }).sort({ createdAt: -1 });
+        if (!hotel) {
+            throw new Error("Hotels not found");
+        }
+        return hotel;
+    } catch (error) {
         throw new Error("Hotels not found");
     }
-    return hotel;
 }
 
 export async function updateHotel(id: string, data: any) {
-    await connectDB();
-    const hotel = await Hotel.findByIdAndUpdate(id, data, { new: true });
-    if (!hotel) {
+    try {
+        const user = await auth();
+        await connectDB();
+        const hotel = await Hotel.findByIdAndUpdate(id, data, { new: true });
+        if (!hotel) {
+            throw new Error("Hotel not found");
+        }
+        return hotel;
+    } catch (error) {
         throw new Error("Hotel not found");
     }
-    return hotel;
 }
 
 export async function deleteHotel(id: string) {
-    await connectDB();
-    await Hotel.findByIdAndDelete(id);
-    return { success: true };
+    try {
+        await connectDB();
+        await Hotel.findByIdAndDelete(id);
+        return { success: true };
+    } catch (error) {
+        throw new Error("Hotel not found");
+    }
 }
 
-export async function getDishes(userId: string) {
-    await connectDB();
-    const hotel = await Hotel.findById(userId);
-    if (!hotel) {
+export async function getDishes() {
+    try {
+        const user = await auth();
+        await connectDB();
+        const hotel = await Hotel.findById(user.userId);
+        if (!hotel) {
+            throw new Error("Dish not found");
+        }
+        const dishes = hotel?.dishes || [];
+        return dishes;
+    } catch (error) {
         throw new Error("Dish not found");
     }
-    const dishes = hotel?.dishes || [];
-    return dishes;
 }
 
-export async function createDish(userId: string, data: any) {
-    await connectDB();
-    const hotel = await Hotel.findById(userId);
-    if (!hotel) {
-        throw new Error("Hotel not found");
-    }
-    const dishes = hotel?.dishes || [];
-    dishes.push(data);
-    await hotel.save();
-    return dishes;
-}
-
-export async function updateDish(userId: string, dishId: string, data: any) {
-    await connectDB();
-
-    const hotel = await Hotel.findById(userId);
-    if (!hotel) {
-        throw new Error("Hotel not found");
-    }
-
-    const dish = hotel.dishes.id(dishId);
-    if (!dish) {
+export async function createDish(data: any) {
+    try {
+        const user = await auth();
+        await connectDB();
+        const hotel = await Hotel.findById(user.userId);
+        if (!hotel) {
+            throw new Error("Hotel not found");
+        }
+        const dishes = hotel?.dishes || [];
+        dishes.push(data);
+        await hotel.save();
+        return dishes;
+    } catch (error) {
         throw new Error("Dish not found");
     }
-
-    Object.assign(dish, data);
-
-    await hotel.save();
-    return { success: true, dish };
 }
 
-export async function deleteDish(userId: string, id: string) {
-    await connectDB();
-    const hotel = await Hotel.findById(userId);
-    if (!hotel) {
-        throw new Error("Hotel not found");
+export async function updateDish(dishId: string, data: any) {
+    try {
+        const user = await auth();
+        await connectDB();
+
+        const hotel = await Hotel.findById(user.userId);
+        if (!hotel) {
+            throw new Error("Hotel not found");
+        }
+
+        const dish = hotel.dishes.id(dishId);
+        if (!dish) {
+            throw new Error("Dish not found");
+        }
+
+        Object.assign(dish, data);
+
+        await hotel.save();
+        return { success: true, dish };
+    } catch (error) {
+        throw new Error("Dish not found");
     }
-    const dishes = hotel?.dishes || [];
-    dishes.filter((dish: any) => dish._id !== id);
-    await hotel.save();
-    return { success: true };
+}
+
+export async function deleteDish(id: string) {
+    try {
+        const user = await auth();
+        await connectDB();
+        const hotel = await Hotel.findById(user.userId);
+        if (!hotel) {
+            throw new Error("Hotel not found");
+        }
+        const dishes = hotel?.dishes || [];
+        dishes.filter((dish: any) => dish._id !== id);
+        await hotel.save();
+        return { success: true };
+    } catch (error) {
+        throw new Error("Dish not found");
+    }
 }

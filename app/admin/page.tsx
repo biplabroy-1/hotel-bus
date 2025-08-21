@@ -166,7 +166,7 @@ export default function RecipesPage() {
         {/* Header */}
         <h1 className="text-3xl font-bold flex items-center gap-2 mb-3">
           <ChefHat className="h-8 w-8 text-primary" />
-          DishManagement
+          Dish Management
         </h1>
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-4">
